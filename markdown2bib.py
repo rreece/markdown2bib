@@ -4,10 +4,10 @@ NAME
     markdown2bib.py - Converts simple markdown-formatted APA bibliographies to bibtex
 
 SYNOPSIS
-    Put synposis here.
+    markdown2bib.py [-o out.bib] input1.md [input2.md ...]
 
 DESCRIPTION
-    Put description here.
+    Scrape the world's bibliographies!
 
 OPTIONS
     -h, --help
@@ -23,12 +23,10 @@ COPYRIGHT
     Copyright 2016 Ryan Reece
     License: GPL <http://www.gnu.org/licenses/gpl.html>
 
-SEE ALSO
-    ROOT <http://root.cern.ch>
-
 TO DO
-    - One.
-    - Two.
+    - Test things better.
+    - Add "edition" for books.
+    - Eat a baby.
 
 2016-03-15
 """
