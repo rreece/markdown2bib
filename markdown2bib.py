@@ -23,11 +23,6 @@ COPYRIGHT
     Copyright 2016 Ryan Reece
     License: GPL <http://www.gnu.org/licenses/gpl.html>
 
-TO DO
-    - Test things better.
-    - Add "edition" for books.
-    - Eat a baby.
-
 2016-03-15
 """
 

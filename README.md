@@ -2,15 +2,15 @@
 
 Converts simple markdown-formatted APA bibliographies to bibtex
 
-## SYNOPSIS
+## Synopsis
 
     markdown2bib.py [-o out.bib] input1.md [input2.md ...]
 
-## DESCRIPTION
+## Description
 
 Scrape the world's bibliographies!
 
-## OPTIONS
+## Options
 
     -h, --help
         Prints this manual and exits.
@@ -18,16 +18,24 @@ Scrape the world's bibliographies!
     -o OUTFILE
         Specifies the output filename (out.bib by default).
 
-## AUTHOR
+## Author
 
 Ryan Reece  <ryan.reece@cern.ch>
 
-## COPYRIGHT
+## License
 
 Copyright 2016 Ryan Reece     
 License: GPL <http://www.gnu.org/licenses/gpl.html>
 
-## TO DO
+## Getting started
+
+All you need is a working installation of python.
+Try running on the example test file, `test_bib.md`,
+by doing:
+
+    ./markdown2bib.py test_bib.md
+
+## TODOs
 
 -  Test things better.
 -  Add "edition" for books.
