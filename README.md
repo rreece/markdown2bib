@@ -11,7 +11,7 @@ Converts simple markdown-formatted APA bibliographies to bibtex
 Scrape the world's bibliographies!
 
 Make a text file that has one reference per line in the style of the American Psychological Association.
-The journal or book titles need to be in [markdown-style bold](http://daringfireball.net/projects/markdown/syntax), meaning `\*Set Within Asterixis\*`.
+The journal or book titles need to be in [markdown-style bold](http://daringfireball.net/projects/markdown/syntax), meaning `*Set Within Asterixis*`.
 For example:
 
     Baker, D.J. (2015). The Philosophy of Quantum Field Theory. [Preprint]
