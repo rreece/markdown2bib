@@ -30,8 +30,7 @@ License: GPL <http://www.gnu.org/licenses/gpl.html>
 ## Getting started
 
 All you need is a working installation of python.
-Try running on the example test file, `test_bib.md`,
-by doing:
+Try running on the example test file:
 
     ./markdown2bib.py test_bib.md
 
