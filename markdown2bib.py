@@ -8,6 +8,7 @@ SYNOPSIS
 
 DESCRIPTION
     Scrape the world's bibliographies!
+    All your bibs are belong to us.
 
 OPTIONS
     -h, --help
