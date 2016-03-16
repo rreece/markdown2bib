@@ -209,7 +209,6 @@ def parse_line(line):
                         r"(\s+(Retrieved\s+from\s+)?(?P<url>https?://\S+)[,.]?)?",
                         r"(\s+\[?(?P<note>[^\[\]]+)\]?\.?)?",
                         ])
-#                        r"(\s+\(p+\.\s+(?P<pages>\d+-*\d*)\)[,.]?)?",
     # Baker, D. J. (2009). Against field interpretations of quantum field theory. *The British Journal for the Philosophy of Science*, 60(3), 585--609.
     # Baker, D.J. (2015). The Philosophy of Quantum Field Theory. [Preprint]
     rep_article = ''.join([r"(?P<author>[^()]+)",
