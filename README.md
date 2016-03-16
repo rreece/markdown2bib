@@ -28,6 +28,13 @@ For example:
     -o OUTFILE
         Specifies the output filename (out.bib by default).
 
+## Getting started
+
+All you need is a working installation of python.
+Try running on the example test file:
+
+    ./markdown2bib.py test_bib.md
+
 ## Author
 
 Ryan Reece  <ryan.reece@cern.ch>
@@ -36,13 +43,6 @@ Ryan Reece  <ryan.reece@cern.ch>
 
 Copyleft 2016 Ryan Reece     
 License: GPL <http://www.gnu.org/licenses/gpl.html>
-
-## Getting started
-
-All you need is a working installation of python.
-Try running on the example test file:
-
-    ./markdown2bib.py test_bib.md
 
 ## TODOs
 
