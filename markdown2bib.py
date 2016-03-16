@@ -183,6 +183,7 @@ def parse_line(line):
     rep_book = ''.join([r"(?P<author>[^()]+)",
                         r"\s+\((?P<year>\d+)\)[,.]",
                         r"\s+\*(?P<title>[^*]+)\*[,.]?",
+                        r"\s+\((?P<edition>\d+)\S+\s+ed\.\)[,.]?",
                         r"(?!\s+https?://)(\s+((?P<address>[^.:\[\]]+):\s+)?(?P<publisher>[^.\[\]]+))?[,.]?",
                         r"(\s+(?P<url>https?://\S+)[,.]?)?",
                         r"(\s+\[?(?P<note>[^\[\]]+)\]?\.?)?",
@@ -191,8 +192,8 @@ def parse_line(line):
     rep_incollection = ''.join([r"(?P<author>[^()]+)",
                         r"\s+\((?P<year>\d+)\)[,.]",
                         r"\s+(?P<title>[^.?!\[\]]+[?!]?)[,.]?",
-                        r"\s+In\s+",
-                        r"(?P<editor>[^()]+)\s+\(Eds?\.\)[,.]?",
+                        r"\s+In",
+                        r"(\s+(?P<editor>[^()]+)\s+\(Eds?\.\)[,.]?)?",
                         r"(?!\s+https?://)(\s+\*(?P<booktitle>[^()]+)\*[,.]?)",
                         r"(\s+\(p+\.\s+(?P<pages>\d+-*\d*)\)[,.]?)?",
                         r"(?!\s+https?://)(\s+((?P<address>[^.:\[\]]+):\s+)?(?P<publisher>[^.\[\]]+))?[,.]?",
@@ -247,7 +248,7 @@ def parse_book(reo):
         author      = {},
         year        = {2000},
         title       = {},
-        edition     = {},   # optional
+        edition     = {2},  # optional
         address     = {},   # optional
         publisher   = {},   # optional
         url         = {},   # optional
@@ -280,8 +281,8 @@ def parse_book(reo):
     lines.append('    author      = {%s},' % author)
     lines.append('    year        = {%s},' % reo.group('year'))
     lines.append('    title       = "{%s}",' % reo.group('title'))
-#    if reo.group('edition'):
-#        pass TODO
+    if reo.group('edition'):
+        lines.append('    edition     = {%s},' % reo.group('edition'))
     if reo.group('address'):
         lines.append('    address     = {%s},' % reo.group('address'))
     if reo.group('publisher'):
@@ -304,6 +305,7 @@ def parse_incollection(reo):
         title       = "{A Philosopher Looks at Quantum Field Theory}",
         editor      = {Brown, H. and R. Harr\'{e}},
         booktitle   = "{Philosophical Foundations of Quantum Field Theory}",
+        edition     = {2},
         publisher   = {Clarendon Press},
         address     = {Oxford},
         pages       = {9--23},
@@ -325,6 +327,8 @@ def parse_incollection(reo):
     lines.append('    author      = {%s},' % author)
     lines.append('    year        = {%s},' % reo.group('year'))
     lines.append('    title       = "{%s}",' % reo.group('title'))
+    if reo.group('edition'):
+        lines.append('    edition     = {%s},' % reo.group('edition'))
     if reo.group('editor'):
         editor = reo.group('editor')
         editor = editor.replace('&', 'and')
@@ -457,6 +461,17 @@ def clean_citation(fn):
     ## convert all '-' to '_'
     new_fn = new_fn.replace('-', '_')
 
+    ## chop-off article words
+    new_fn_lower = new_fn.lower()
+    if new_fn_lower.endswith('_and'):
+        new_fn = new_fn[:-4]
+    if new_fn_lower.endswith('_a'):
+        new_fn = new_fn[:-2]
+    if new_fn_lower.endswith('_an'):
+        new_fn = new_fn[:-3]
+    if new_fn_lower.endswith('_the'):
+        new_fn = new_fn[:-4]
+
     return new_fn
 
 
@@ -512,7 +527,7 @@ if __name__ == '__main__': main()
 #     author      = {},
 #     year        = {2000},
 #     title       = {},
-#     edition     = {},   # optional
+#     edition     = {2},  # optional
 #     address     = {},   # optional
 #     publisher   = {},   # optional
 #     url         = {},   # optional
@@ -524,6 +539,7 @@ if __name__ == '__main__': main()
 #     title       = {A Philosopher Looks at Quantum Field Theory},
 #     editor      = {Brown, H. and R. Harr\'{e}},
 #     booktitle   = {Philosophical Foundations of Quantum Field Theory},
+#     edition     = {2},  # optional
 #     publisher   = {Clarendon Press},
 #     address     = {Oxford},
 #     pages       = {9--23},
