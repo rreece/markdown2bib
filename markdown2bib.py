@@ -234,7 +234,7 @@ def parse_line(line):
     if reo:
         ## parse book
         print '|  Book: %s' % trim_string(line)
-        citation, bibtex = parse_book(reo)
+        citation, bibtex = make_book(reo)
         return 'book', citation, bibtex
 
     else:
@@ -242,7 +242,7 @@ def parse_line(line):
         if reo:
             ## parse incollection
             print '|  Incollection: %s' % trim_string(line)
-            citation, bibtex = parse_incollection(reo)
+            citation, bibtex = make_incollection(reo)
             return 'incollection', citation, bibtex
 
         else:
@@ -250,7 +250,7 @@ def parse_line(line):
             if reo:
                 ## parse article
                 print '|  Article: %s' % trim_string(line)
-                citation, bibtex = parse_article(reo)
+                citation, bibtex = make_article(reo)
                 return 'article', citation, bibtex
 
             else:
@@ -258,7 +258,7 @@ def parse_line(line):
                 if reo:
                     ## parse misc
                     print '|  Misc: %s' % trim_string(line)
-                    citation, bibtex = parse_misc(reo)
+                    citation, bibtex = make_misc(reo)
                     return 'misc', citation, bibtex
 
                 else:
@@ -268,7 +268,7 @@ def parse_line(line):
 
 
 #______________________________________________________________________________
-def parse_book(reo):
+def make_book(reo):
     """
     @book{Author_year_title,
         author      = {},
@@ -323,7 +323,7 @@ def parse_book(reo):
 
 
 #______________________________________________________________________________
-def parse_incollection(reo):
+def make_incollection(reo):
     """
     @incollection{Redhead_1988_philosopher_looks_at_QFT,
         author      = {Redhead, M.L.G.},
@@ -380,7 +380,7 @@ def parse_incollection(reo):
 
 
 #______________________________________________________________________________
-def parse_article(reo):
+def make_article(reo):
     """
     @article{Author_year_title,
         author      = {},
@@ -430,7 +430,7 @@ def parse_article(reo):
 
 
 #______________________________________________________________________________
-def parse_misc(reo):
+def make_misc(reo):
     """
     @misc{Author_year_title,
         author      = {},
@@ -467,11 +467,6 @@ def parse_misc(reo):
     return citation, s
 
 
-#______________________________________________________________________________
-def clean_citation(fn):
-    new_fn = str(fn)
-
-    ## remove extra spaces and convert to '-'
 #______________________________________________________________________________
 def clean_citation(fn):
     new_fn = str(fn)
