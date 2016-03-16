@@ -11,6 +11,7 @@ Converts simple markdown-formatted APA bibliographies to [bibtex](https://verbos
 Scrape the world's bibliographies!
 
 Make a text file that has one reference per line in the style of the American Psychological Association.
+Currently three types of references are supported: `article`, `book`, and `incollection`.
 The journal or book titles need to be in [markdown-style bold](http://daringfireball.net/projects/markdown/syntax), meaning `*Set Within Asterixis*`.
 For example:
 
