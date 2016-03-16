@@ -2,6 +2,7 @@
 
 Converts simple markdown-formatted [APA](http://www.library.arizona.edu/search/reference/citation-apa.html)
 bibliographies to [bibtex](https://verbosus.com/bibtex-style-examples.html).
+All your bibs are belong to us.
 
 ## Synopsis
 
@@ -13,7 +14,7 @@ Scrape the world's bibliographies!
 
 Make a text file that has one reference per line in the
 [style of the American Psychological Association](http://www.library.arizona.edu/search/reference/citation-apa.html).
-Currently three types of references are supported: `article`, `book`, and `incollection`.
+Currently three types of references are supported: `article`, `book`, `incollection`, and `misc`.
 The journal or book titles need to be in [markdown-style bold](http://daringfireball.net/projects/markdown/syntax), meaning `*Set Within Asterixis*`.
 For example, `test_bib.md`:
 

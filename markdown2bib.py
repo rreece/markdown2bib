@@ -82,6 +82,7 @@ def main():
         articles = []
         books = []
         incollections = []
+        miscs = []
         errors = []
 
         ## count the articles, books, ...
@@ -93,6 +94,8 @@ def main():
                 books.append(citation)
             elif ctype == 'incollection':
                 incollections.append(citation)
+            elif ctype == 'misc':
+                miscs.append(citation)
             else:
                 errors.append(k)
 
@@ -101,6 +104,7 @@ def main():
         print '|  - %3i articles' % len(articles)
         print '|  - %3i incollections' % len(incollections)
         print '|  - %3i books' % len(books)
+        print '|  - %3i miscs' % len(miscs)
         print '|  - %3i errors' % len(errors)
         print '|'
 
@@ -127,6 +131,11 @@ def main():
 
         f_out.write('Books: %i\n' % len(books))
         for a in books:
+            f_out.write('%s\n' % a)
+        f_out.write('\n')
+
+        f_out.write('Miscs: %i\n' % len(miscs))
+        for a in miscs:
             f_out.write('%s\n' % a)
         f_out.write('\n')
 
@@ -185,7 +194,7 @@ def parse_line(line):
                         r"\s+\*(?P<title>[^*]+)\*[,.]?",
                         r"(\s+\((?P<edition>\d+)\S+\s+ed\.\)[,.]?)?",
                         r"(?!\s+https?://)(\s+((?P<address>[^.:\[\]]+):\s+)?(?P<publisher>[^.\[\]]+))?[,.]?",
-                        r"(\s+(?P<url>https?://\S+)[,.]?)?",
+                        r"(\s+(Retrieved\s+from\s+)?(?P<url>https?://\S+)[,.]?)?",
                         r"(\s+\[?(?P<note>[^\[\]]+)\]?\.?)?",
                         ])
     # Redhead, M. (1988). A Philosopher Looks at Quantum Field Theory. In H. Brown & R. Harr\'{e} (Eds.), Philosophical Foundations of Quantum Field Theory (pp. 9-23). Oxford: Clarendon Press.
@@ -197,7 +206,7 @@ def parse_line(line):
                         r"(?!\s+https?://)(\s+\*(?P<booktitle>[^()]+)\*[,.]?)",
                         r"(\s+\(((?P<edition>\d+)\S+\s+ed\.,?\s*)?p+\.\s+(?P<pages>\d+-*\d*)\)[,.]?)?",
                         r"(?!\s+https?://)(\s+((?P<address>[^.:\[\]]+):\s+)?(?P<publisher>[^.\[\]]+))?[,.]?",
-                        r"(\s+(?P<url>https?://\S+)[,.]?)?",
+                        r"(\s+(Retrieved\s+from\s+)?(?P<url>https?://\S+)[,.]?)?",
                         r"(\s+\[?(?P<note>[^\[\]]+)\]?\.?)?",
                         ])
 #                        r"(\s+\(p+\.\s+(?P<pages>\d+-*\d*)\)[,.]?)?",
@@ -206,10 +215,18 @@ def parse_line(line):
     rep_article = ''.join([r"(?P<author>[^()]+)",
                         r"\s+\((?P<year>\d+)\)[,.]",
                         r"\s+(?P<title>[^.?!\[\]]+[?!]?)[,.]?",
-                        r"(?!\s+https?://)(\s+\*(?P<journal>[^*]+)\*[,.]?)?",
+                        r"(?!\s+https?://)(\s+\*(?P<journal>[^*]+)\*[,.]?)",
                         r"(\s+\*?(?P<volume>\d+)\*?(\((?P<number>\d+)\))?[,.]?)?",
                         r"(\s+(?P<pages>\d+-*\d*)[,.]?)?",
-                        r"(\s+(?P<url>https?://\S+)[,.]?)?",
+                        r"(\s+(Retrieved\s+from\s+)?(?P<url>https?://\S+)[,.]?)?",
+                        r"(\s+\[?(?P<note>[^\[\]]+)\]?\.?)?",
+                        ])
+    # ATLAS Collaboration. (2011). Updated Luminosity Determination in pp Collisions at $\sqrt{s}=7 TeV using the ATLAS Detector. ATLAS-CONF-2010-011. http://cdsweb.cern.ch/record/1334563
+    rep_misc = ''.join([r"(?P<author>[^()]+)",
+                        r"\s+\((?P<year>\d+)\)[,.]",
+                        r"\s+(?P<title>[^.?!\[\]]+[?!]?)[,.]?",
+                        r"(?!\s+https?://)(\s+(?P<howpublished>[^.\[\]]+)[,.]?)?",
+                        r"(\s+(Retrieved\s+from\s+)?(?P<url>https?://\S+)[,.]?)?",
                         r"(\s+\[?(?P<note>[^\[\]]+)\]?\.?)?",
                         ])
 
@@ -237,7 +254,15 @@ def parse_line(line):
                 return 'article', citation, bibtex
 
             else:
-                print '|  NO MATCH: %s' % trim_string(line)
+                reo = re.match(rep_misc, line)
+                if reo:
+                    ## parse misc
+                    print '|  Misc: %s' % trim_string(line)
+                    citation, bibtex = parse_misc(reo)
+                    return 'misc', citation, bibtex
+
+                else:
+                    print '|  NO MATCH: %s' % trim_string(line)
 
     return None, None, None
 
@@ -404,6 +429,49 @@ def parse_article(reo):
     return citation, s
 
 
+#______________________________________________________________________________
+def parse_misc(reo):
+    """
+    @misc{Author_year_title,
+        author      = {},
+        year        = {},
+        title       = "{}",
+        howpublished = "{}",
+        note        = {},   # optional
+        url         = {},   # optional
+    }
+    """
+    lines = []
+    cite_author = reo.group('author').split()[0].rstrip(',')
+    cite_year = reo.group('year')
+    cite_title = reo.group('title')
+    max_title_len = 50
+    if len(cite_title) > max_title_len:
+        cite_title = textwrap.fill(cite_title, max_title_len).split('\n')[0]
+    cite_title = clean_citation(cite_title)
+    citation = '%s_%s_%s' % (cite_author, cite_year, cite_title)
+    lines.append('@misc{%s,' % citation)
+    author = reo.group('author')
+    author = author.replace('&', 'and')
+    lines.append('    author      = {%s},' % author)
+    lines.append('    year        = {%s},' % reo.group('year'))
+    lines.append('    title       = "{%s}",' % reo.group('title'))
+    if reo.group('howpublished'):
+        lines.append('    howpublished = "{%s}",' % reo.group('howpublished'))
+    if reo.group('url'):
+        lines.append('    url         = {%s},' % reo.group('url'))
+    if reo.group('note'):
+        lines.append('    note        = {%s},' % reo.group('note'))
+    lines.append('}')
+    s = '\n'.join(lines)
+    return citation, s
+
+
+#______________________________________________________________________________
+def clean_citation(fn):
+    new_fn = str(fn)
+
+    ## remove extra spaces and convert to '-'
 #______________________________________________________________________________
 def clean_citation(fn):
     new_fn = str(fn)
