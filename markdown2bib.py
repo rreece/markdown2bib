@@ -207,7 +207,7 @@ def parse_line(line):
                         r"\s+\((?P<year>\d+)\)[,.]",
                         r"\s+(?P<title>[^.?!\[\]]+[?!]?)[,.]?",
                         r"(?!\s+https?://)(\s+\*(?P<journal>[^*]+)\*[,.]?)?",
-                        r"(\s+(?P<volume>\d+)(\((?P<number>\d+)\))?[,.]?)?",
+                        r"(\s+\*?(?P<volume>\d+)\*?(\((?P<number>\d+)\))?[,.]?)?",
                         r"(\s+(?P<pages>\d+-*\d*)[,.]?)?",
                         r"(\s+(?P<url>https?://\S+)[,.]?)?",
                         r"(\s+\[?(?P<note>[^\[\]]+)\]?\.?)?",
