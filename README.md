@@ -46,9 +46,10 @@ License: GPL <http://www.gnu.org/licenses/gpl.html>
 
 ## TODOs
 
--  Test things better.
--  Add "edition" for books.
--  Eat a baby.
+-   Test things better.
+-   Add "edition" for books.
+-   Allow incollections to be missing the editor.
+-   Eat a baby.
 
 
 **Created:** 2016-03-15

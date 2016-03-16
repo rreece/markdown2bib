@@ -191,7 +191,8 @@ def parse_line(line):
     rep_incollection = ''.join([r"(?P<author>[^()]+)",
                         r"\s+\((?P<year>\d+)\)[,.]",
                         r"\s+(?P<title>[^.?!\[\]]+[?!]?)[,.]?",
-                        r"\s+In\s+(?P<editor>[^()]+)\s+\(Eds?\.\)[,.]?",
+                        r"\s+In\s+",
+                        r"(?P<editor>[^()]+)\s+\(Eds?\.\)[,.]?",
                         r"(?!\s+https?://)(\s+\*(?P<booktitle>[^()]+)\*[,.]?)",
                         r"(\s+\(p+\.\s+(?P<pages>\d+-*\d*)\)[,.]?)?",
                         r"(?!\s+https?://)(\s+((?P<address>[^.:\[\]]+):\s+)?(?P<publisher>[^.\[\]]+))?[,.]?",
@@ -324,9 +325,10 @@ def parse_incollection(reo):
     lines.append('    author      = {%s},' % author)
     lines.append('    year        = {%s},' % reo.group('year'))
     lines.append('    title       = "{%s}",' % reo.group('title'))
-    editor = reo.group('editor')
-    editor = editor.replace('&', 'and')
-    lines.append('    editor      = {%s},' % editor)
+    if reo.group('editor'):
+        editor = reo.group('editor')
+        editor = editor.replace('&', 'and')
+        lines.append('    editor      = {%s},' % editor)
     lines.append('    booktitle   = "{%s}",' % reo.group('booktitle'))
     if reo.group('pages'):
         pages = reo.group('pages')
