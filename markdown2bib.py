@@ -45,8 +45,6 @@ import unicodedata
 #------------------------------------------------------------------------------
 # globals
 #------------------------------------------------------------------------------
-timestamp = time.strftime('%Y-%m-%d-%Hh%M')
-GeV = 1000.
 
 
 #------------------------------------------------------------------------------
@@ -107,6 +105,7 @@ def main():
         print '|'
 
         ## write header
+        timestamp = time.strftime('%Y-%m-%d-%Hh%M')
         f_out = open(ops.output, 'w')
         f_out.write('## bibtex references file\n')
         f_out.write('## gerenated by markdown_bib.py\n')
