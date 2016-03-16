@@ -12,11 +12,14 @@ All your bibs are belong to us.
 
 Scrape the world's bibliographies!
 
-Make a text file that has one reference per line in the
-[style of the American Psychological Association](http://www.library.arizona.edu/search/reference/citation-apa.html).
+First, you must make a text file that has one reference per line in a style that loosely follows the
+[American Psychological Association (APA)](http://www.library.arizona.edu/search/reference/citation-apa.html),
+which is commonly used in humanities.
+One idea is that copy and pasting the text of a some paper's bibliography should then be easily manipulable 
+to the acceptable format (albeit by hand unless you have script writing markdown APA references).
 Currently four types of references are supported: `article`, `book`, `incollection`, and `misc`.
-The journal or book titles need to be in [markdown-style bold](http://daringfireball.net/projects/markdown/syntax), meaning `*Set Within Asterixis*`.
-For example, `test_bib.md`:
+The journal or book titles need to be in [markdown-style bold](http://daringfireball.net/projects/markdown/syntax),
+meaning `*Set Within Asterixis*`. For example, `test_bib.md`:
 
     Baker, D.J. (2015). The Philosophy of Quantum Field Theory. [Preprint]
     Baker, D. J. (2009). Against field interpretations of quantum field theory. *The British Journal for the Philosophy of Science*, 60(3), 585--609.
