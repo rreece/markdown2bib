@@ -14,7 +14,7 @@ Scrape the world's bibliographies!
 
 Make a text file that has one reference per line in the
 [style of the American Psychological Association](http://www.library.arizona.edu/search/reference/citation-apa.html).
-Currently three types of references are supported: `article`, `book`, `incollection`, and `misc`.
+Currently four types of references are supported: `article`, `book`, `incollection`, and `misc`.
 The journal or book titles need to be in [markdown-style bold](http://daringfireball.net/projects/markdown/syntax), meaning `*Set Within Asterixis*`.
 For example, `test_bib.md`:
 
