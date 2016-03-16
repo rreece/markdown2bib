@@ -4,7 +4,7 @@ NAME
     markdown2bib.py - Converts simple markdown-formatted APA bibliographies to bibtex
 
 SYNOPSIS
-    markdown2bib.py [-o out.bib] input1.md [input2.md ...]
+    markdown2bib.py [-h] [-o OUTPUT] infiles [infiles ...]
 
 DESCRIPTION
     Scrape the world's bibliographies!
@@ -54,7 +54,7 @@ GeV = 1000.
 def options():
     parser = argparse.ArgumentParser()
     parser.add_argument('infiles',  default=None, nargs='+',
-            help='A positional argument.')
+            help='Input text files of APA references.')
 #    parser.add_argument('-x', '--option',  default=False,  action='store_true',
 #            help="Some toggle option.")
 #    parser.add_argument('-i', '--input',  default=None,

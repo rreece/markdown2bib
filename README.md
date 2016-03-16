@@ -4,7 +4,7 @@ Converts simple markdown-formatted APA bibliographies to bibtex
 
 ## Synopsis
 
-    markdown2bib.py [-o out.bib] input1.md [input2.md ...]
+    markdown2bib.py [-h] [-o OUTPUT] infiles [infiles ...]
 
 ## Description
 
