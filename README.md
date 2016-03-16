@@ -1,6 +1,6 @@
 # markdown2bib
 
-Converts simple markdown-formatted APA bibliographies to bibtex
+Converts simple markdown-formatted APA bibliographies to [bibtex](https://verbosus.com/bibtex-style-examples.html).
 
 ## Synopsis
 
@@ -49,6 +49,7 @@ License: GPL <http://www.gnu.org/licenses/gpl.html>
 -   Test things better.
 -   ~~Add "edition" for books.~~
 -   ~~Allow incollections to be missing the editor.~~
+-   Find a way for bibtex notes to be displayed.
 -   Eat a baby.
 
 
