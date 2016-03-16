@@ -13,13 +13,20 @@ Scrape the world's bibliographies!
 Make a text file that has one reference per line in the style of the American Psychological Association.
 Currently three types of references are supported: `article`, `book`, and `incollection`.
 The journal or book titles need to be in [markdown-style bold](http://daringfireball.net/projects/markdown/syntax), meaning `*Set Within Asterixis*`.
-For example:
+For example, `test_bib.md`:
 
     Baker, D.J. (2015). The Philosophy of Quantum Field Theory. [Preprint]
     Baker, D. J. (2009). Against field interpretations of quantum field theory. *The British Journal for the Philosophy of Science*, 60(3), 585--609.
     Weinberg, S. (1995). *Quantum Theory of Fields, Vol. 1*. Cambridge University Press.
     Redhead, M.L.G. (1988). A Philosopher Looks at Quantum Field Theory. In H. Brown & R. Harr\'{e} (Eds.), *Philosophical Foundations of Quantum Field Theory* (pp. 9-23). Oxford: Clarendon Press.
     Weinberg, S. (1996). What is quantum field theory, and what did we think it is? *Conceptual foundations of quantum field theory: Proceedings, Symposium and Workshop, Boston, USA, March 1-3, 1996*. http://arxiv.org/abs/hep-th/9702027
+
+## Getting started
+
+All you need is a working installation of python.
+Try running on the example test file:
+
+    ./markdown2bib.py test_bib.md
 
 ## Options
 
@@ -28,13 +35,6 @@ For example:
         
     -o OUTFILE
         Specifies the output filename (out.bib by default).
-
-## Getting started
-
-All you need is a working installation of python.
-Try running on the example test file:
-
-    ./markdown2bib.py test_bib.md
 
 ## Author
 
