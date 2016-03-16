@@ -34,7 +34,7 @@ Ryan Reece  <ryan.reece@cern.ch>
 
 ## License
 
-Copyright 2016 Ryan Reece     
+Copyleft 2016 Ryan Reece     
 License: GPL <http://www.gnu.org/licenses/gpl.html>
 
 ## Getting started

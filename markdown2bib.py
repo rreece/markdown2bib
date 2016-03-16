@@ -20,7 +20,7 @@ AUTHOR
     Ryan Reece  <ryan.reece@cern.ch>
 
 COPYRIGHT
-    Copyright 2016 Ryan Reece
+    Copyleft 2016 Ryan Reece
     License: GPL <http://www.gnu.org/licenses/gpl.html>
 
 2016-03-15
