@@ -193,7 +193,7 @@ def parse_line(line):
                         r"\s+\((?P<year>\d+)\)[,.]",
                         r"\s+\*(?P<title>[^*]+)\*[,.]?",
                         r"(\s+\((?P<edition>\d+)\S+\s+ed\.\)[,.]?)?",
-                        r"(?!\s+https?://)(\s+((?P<address>[^.:\[\]]+):\s+)?(?P<publisher>[^.\[\]]+))?[,.]?",
+                        r"((?!\s+https?://)\s+((?P<address>[^.:\[\]]+):\s+)?(?P<publisher>[^.\[\]]+))?[,.]?",
                         r"(\s+(Retrieved\s+from\s+)?(?P<url>https?://\S+)[,.]?)?",
                         r"(\s+\[?(?P<note>[^\[\]]+)\]?\.?)?",
                         ])
@@ -224,7 +224,7 @@ def parse_line(line):
     rep_misc = ''.join([r"(?P<author>[^()]+)",
                         r"\s+\((?P<year>\d+)\)[,.]",
                         r"\s+(?P<title>[^.?!\[\]]+[?!]?)[,.]?",
-                        r"(?!\s+https?://)(\s+(?P<howpublished>[^.\[\]]+)[,.]?)?",
+                        r"((?!\s+https?://)\s+(?P<howpublished>[^.\[\]]+)[,.]?)?",
                         r"(\s+(Retrieved\s+from\s+)?(?P<url>https?://\S+)[,.]?)?",
                         r"(\s+\[?(?P<note>[^\[\]]+)\]?\.?)?",
                         ])
