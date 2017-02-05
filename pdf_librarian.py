@@ -319,13 +319,23 @@ def make_default_filename(fn, meta):
 
     if not meta.has_key('year'): # always not in pdf
 #        meta['year'] = time.strftime('%Y') # use the current year as a placeholder
-        meta['year'] = 1900 # use 1900 as the year placeholder
+        meta['year'] = 1111 # use 1111 as the year placeholder
     
     if not (meta.has_key('author') and meta['author'] and meta['author'].lower() != 'none'):
         meta['author'] = 'Author'
     
     if not (meta.has_key('title') and meta['title'] and meta['title'].lower() != 'none'):
         meta['title'] = root
+
+    ## some fixes for the author metadata
+    meta['author'] = clean_filename(meta['author'])
+    meta['author'] = meta['author'].replace('.', '')
+
+    ## some fixes for the title metadata
+    meta['title'] = clean_filename(meta['title'])
+    if meta['title'].endswith('.pdf'):
+        meta['title'] = meta['title'][:-4]
+    meta['title'] = meta['title'].replace('.', '')
 
     new_fn = '%(year)s.%(author)s.%(title)s.pdf' % meta
 
