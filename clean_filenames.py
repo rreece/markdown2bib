@@ -104,6 +104,9 @@ def main():
 def clean_filename(fn):
     new_fn = str(fn)
 
+    # split name, ext
+    new_fn, ext = os.path.splitext(new_fn)
+
     ## remove extra spaces and convert to '-'
     new_fn = new_fn.strip()
     u_new_fn = unicode(new_fn, 'utf-8')
@@ -123,6 +126,9 @@ def clean_filename(fn):
     u_new_fn = u_new_fn.encode('ascii','ignore')
     new_fn = str(u_new_fn)
 
+    ## change . to -
+    new_fn = new_fn.replace('.', '-')
+
     ## remove redundant space
     new_fn = new_fn.replace('     ', ' ')
     new_fn = new_fn.replace('    ', ' ')
@@ -138,8 +144,8 @@ def clean_filename(fn):
     new_fn = new_fn.replace('----', '-')
     new_fn = new_fn.replace('---', '-')
     new_fn = new_fn.replace('--', '-')
-    new_fn = new_fn.replace('.-', '.')
-    new_fn = new_fn.replace('-.', '.')
+#    new_fn = new_fn.replace('.-', '.')
+#    new_fn = new_fn.replace('-.', '.')
 
     ## remove strange characters
     len_fn = len(new_fn)
@@ -151,6 +157,10 @@ def clean_filename(fn):
             len_fn = len(new_fn)
         i += 1
     new_fn = new_fn.replace('_', '')
+
+    ## add ext back
+    if ext:
+        new_fn = new_fn + ext
 
     return new_fn
 
