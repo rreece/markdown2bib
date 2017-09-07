@@ -50,7 +50,8 @@ import unicodedata
 # Baker, D.J. (2015). The Philosophy of Quantum Field Theory. [Preprint]
 rep_article_s = ''.join([r"(?P<author>([^(),.]+(,\s+\w\.(\s*\w\.)?(\s*\w\.)?)?(,\s+(&\s+)?)?){1,6}(\s+et\s+al\.)?)[,.]?",
                     r"\s+\((?P<year>\d+)\)[,.]",
-                    r"\s+(?P<title>[^.?!\[\]]+[?!]?)[,.]?",
+#                    r"\s+(?P<title>[^.?!\[\]]+[?!]?)[,.]?",
+                    r"\s+(?P<title>[^*\[\]]+)[,.]?",
                     r"(?!\s+https?://)(\s+\*(?P<journal>[^*]+)\*[,.]?)",
                     r"(\s+\*?(?P<volume>\d+)\*?(\((?P<number>\d+)\))?[,.]?)?",
                     r"(\s+(?P<pages>(P|p)?\d+-*\d*)[,.]?)?",
