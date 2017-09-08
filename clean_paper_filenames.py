@@ -67,8 +67,8 @@ def options():
     parser = argparse.ArgumentParser()
     parser.add_argument('infiles', nargs='*', default=None,
             help='A positional argument.')
-    parser.add_argument('-x', '--option',  default=False,  action='store_true',
-            help="Some toggle option.")
+    parser.add_argument('-f', '--force',  default=False,  action='store_true',
+            help="Ask no questions.")
     return parser.parse_args()
 
 
@@ -97,6 +97,7 @@ def main():
     good_filenames = []
 
     for fn in infiles:
+        new_fn = fn
 
         ## skip files that are not pdfs
         if not re.match(r'.+\.(pdf|PDF)', fn):
@@ -132,7 +133,11 @@ def main():
 
             ## ask if the default name is ok
             print '  The corrected file name defaults to: %s' % new_fn
-            uin = raw_input('  Would you like to rename the file to this? [y/n]: ').strip()
+            uin = None
+            if ops.force:
+                uin = 'y'
+            else:
+                uin = raw_input('  Would you like to rename the file to this? [y/n]: ').strip()
 
             if uin == 'y' or uin == 'Y':
                 rename(fn, new_fn)
@@ -182,11 +187,12 @@ def main():
 
 #______________________________________________________________________________
 def clean_filename(fn):
-    new_fn = str(fn)
-
-    ## remove extra spaces and convert to '-'
-    new_fn = new_fn.strip()
-    u_new_fn = unicode(new_fn, 'utf-8')
+    new_fn = fn.strip()
+    u_new_fn = None
+    if isinstance(new_fn, unicode):
+        u_new_fn = new_fn
+    else:
+        u_new_fn = unicode(new_fn, 'utf-8')
 
     ## change unicode-hyphen-like characters to ascii
     u_new_fn = u_new_fn.replace(u'\u2010', '-')
@@ -232,13 +238,17 @@ def clean_filename(fn):
         i += 1
     new_fn = new_fn.replace('_', '')
 
+    ## remove any more than 3 periods
+    new_fn = new_fn.replace('.', '@', 3)
+    new_fn = new_fn.replace('.', '-')
+    new_fn = new_fn.replace('@', '.')
+    len_fn = len(new_fn)
+
     return new_fn
 
 
 #______________________________________________________________________________
 def fix_filename(fn):
-    new_fn = str(fn)
-
     new_fn = clean_filename(fn)
 
     ## fix suffix
@@ -274,9 +284,8 @@ def fix_filename(fn):
 
 #______________________________________________________________________________
 def make_default_filename(fn, meta):
-    new_fn = str(fn)
-
     new_fn = clean_filename(fn)
+
     root, ext = os.path.splitext(new_fn) # ext = '.pdf'
     root = root.replace('.', '-')
 
