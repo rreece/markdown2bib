@@ -109,63 +109,69 @@ def main():
             print '  Good filename: %s' % fn
             good_filenames.append(fn)
 
-        ## automatically fix files that are nearly good
-        elif re.match(rex_near_filename, fn):
-            print '  Fixing file: %s' % fn
-            new_fn = fix_filename(fn)
-            rename(fn, new_fn)
-            n_renamed += 1
-            new_filenames.append(new_fn)
-            good_filenames.append(new_fn)
-
-        ## ask the user for help
+        ## try cleaning
         else:
-            print ''
-            print '  File: %s' % fn
-            print '    is not close to having a good name.' 
+            print '  Cleaning file: %s' % fn
+            new_fn = clean_filename(fn)
 
-            ## try to use the metadata first
-            meta = get_pdf_metadata(fn)
-            if meta:
-                print '  The pdf metadata: %s' % meta
-                new_fn = make_default_filename(fn, meta)
+            ## automatically fix files that are nearly good
+            if re.match(rex_near_filename, new_fn):
+                print '  Fixing file: %s' % new_fn
                 new_fn = fix_filename(new_fn)
 
-            ## ask if the default name is ok
-            print '  The corrected file name defaults to: %s' % new_fn
-            uin = None
-            if ops.force:
-                uin = 'y'
-            else:
-                uin = raw_input('  Would you like to rename the file to this? [y/n]: ').strip()
-
-            if uin == 'y' or uin == 'Y':
                 rename(fn, new_fn)
                 n_renamed += 1
                 new_filenames.append(new_fn)
                 good_filenames.append(new_fn)
-            
+
+            ## ask the user for help
             else:
-                ## ask if the user would like to enter a better name
-                uin = raw_input('  Would you like to enter a better one? [y/n]: ').strip()
+                print ''
+                print '  File: %s' % fn
+                print '    is not close to having a good name.' 
+
+                ## try to use the metadata first
+                meta = get_pdf_metadata(fn)
+                if meta:
+                    print '  The pdf metadata: %s' % meta
+                    new_fn = make_default_filename(fn, meta)
+                    new_fn = fix_filename(new_fn)
+
+                ## ask if the default name is ok
+                print '  The corrected file name defaults to: %s' % new_fn
+                uin = None
+                if ops.force:
+                    uin = 'y'
+                else:
+                    uin = raw_input('  Would you like to rename the file to this? [y/n]: ').strip()
+
                 if uin == 'y' or uin == 'Y':
-                    p = subprocess.Popen('open %s' % fn.replace(' ', r'\ '), shell=True)
-                    uin = raw_input('  New file name (empty => skip): ').strip()
-                    p.terminate()  # Seems to do nothing. Apple Preview stays open.
+                    rename(fn, new_fn)
+                    n_renamed += 1
+                    new_filenames.append(new_fn)
+                    good_filenames.append(new_fn)
+                
+                else:
+                    ## ask if the user would like to enter a better name
+                    uin = raw_input('  Would you like to enter a better one? [y/n]: ').strip()
+                    if uin == 'y' or uin == 'Y':
+                        p = subprocess.Popen('open %s' % fn.replace(' ', r'\ '), shell=True)
+                        uin = raw_input('  New file name (empty => skip): ').strip()
+                        p.terminate()  # Seems to do nothing. Apple Preview stays open.
 
-                    if uin:
-                        print '  You suggest: %s' % uin
-                        new_fn = fix_filename(uin)
-                        rename(fn, new_fn)
-                        n_renamed += 1
-                        new_filenames.append(new_fn)
-                        good_filenames.append(new_fn)
+                        if uin:
+                            print '  You suggest: %s' % uin
+                            new_fn = fix_filename(uin)
+                            rename(fn, new_fn)
+                            n_renamed += 1
+                            new_filenames.append(new_fn)
+                            good_filenames.append(new_fn)
 
+                        else:
+                            print '  Skipping file.'
+                
                     else:
                         print '  Skipping file.'
-            
-                else:
-                    print '  Skipping file.'
 
 
     print ''
@@ -238,11 +244,15 @@ def clean_filename(fn):
         i += 1
     new_fn = new_fn.replace('_', '')
 
-    ## remove any more than 3 periods
-    new_fn = new_fn.replace('.', '@', 3)
-    new_fn = new_fn.replace('.', '-')
-    new_fn = new_fn.replace('@', '.')
-    len_fn = len(new_fn)
+    ## remove any more than 3 periods (keeping first 2 and last)
+    np = new_fn.count('.')
+    if np > 3:
+        new_fn = new_fn.replace('.', '#', np-1)
+        new_fn = new_fn.replace('.', '@', 1)
+        new_fn = new_fn.replace('#', '@', 2)
+        new_fn = new_fn.replace('#', '-')
+        new_fn = new_fn.replace('@', '.')
+        len_fn = len(new_fn)
 
     return new_fn
 
