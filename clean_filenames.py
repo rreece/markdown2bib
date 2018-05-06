@@ -86,6 +86,7 @@ def main():
     for fp in infiles:
         dirn, fn = os.path.split(fp)
         new_fn = fn
+        new_fp = fp
 
 #        print '  Cleaning file: %s' % fn
         new_fn = clean_filename(fn)
