@@ -96,8 +96,10 @@ def main():
     new_filenames = []
     good_filenames = []
 
-    for fn in infiles:
+    for fp in infiles:
+        dirn, fn = os.path.split(fp)
         new_fn = fn
+        new_fp = fp
 
         ## skip files that are not pdfs
         if not re.match(r'.+\.(pdf|PDF)', fn):
@@ -107,7 +109,7 @@ def main():
         ## note good files
         if re.match(rex_good_filename, fn):
             print '  Good filename: %s' % fn
-            good_filenames.append(fn)
+            good_filenames.append(fp)
 
         ## try cleaning
         else:
@@ -118,11 +120,11 @@ def main():
             if re.match(rex_near_filename, new_fn):
                 print '  Fixing file: %s' % new_fn
                 new_fn = fix_filename(new_fn)
-
-                rename(fn, new_fn)
+                new_fp = os.path.join(dirn, new_fn)
+                rename(fp, new_fp)
                 n_renamed += 1
-                new_filenames.append(new_fn)
-                good_filenames.append(new_fn)
+                new_filenames.append(new_fp)
+                good_filenames.append(new_fp)
 
             ## ask the user for help
             else:
@@ -131,7 +133,7 @@ def main():
                 print '    is not close to having a good name.' 
 
                 ## try to use the metadata first
-                meta = get_pdf_metadata(fn)
+                meta = get_pdf_metadata(fp)
                 if meta:
                     print '  The pdf metadata: %s' % meta
                     new_fn = make_default_filename(fn, meta)
@@ -146,10 +148,12 @@ def main():
                     uin = raw_input('  Would you like to rename the file to this? [y/n]: ').strip()
 
                 if uin == 'y' or uin == 'Y':
-                    rename(fn, new_fn)
+
+                    new_fp = os.path.join(dirn, new_fn)
+                    rename(fp, new_fp)
                     n_renamed += 1
-                    new_filenames.append(new_fn)
-                    good_filenames.append(new_fn)
+                    new_filenames.append(new_fp)
+                    good_filenames.append(new_fp)
                 
                 else:
                     ## ask if the user would like to enter a better name
@@ -162,10 +166,11 @@ def main():
                         if uin:
                             print '  You suggest: %s' % uin
                             new_fn = fix_filename(uin)
-                            rename(fn, new_fn)
+                            new_fp = os.path.join(dirn, new_fn)
+                            rename(fp, new_fp)
                             n_renamed += 1
-                            new_filenames.append(new_fn)
-                            good_filenames.append(new_fn)
+                            new_filenames.append(new_fp)
+                            good_filenames.append(new_fp)
 
                         else:
                             print '  Skipping file.'

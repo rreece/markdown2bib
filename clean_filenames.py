@@ -83,12 +83,15 @@ def main():
 
     n_renamed = 0
 
-    for fn in infiles:
+    for fp in infiles:
+        dirn, fn = os.path.split(fp)
+        new_fn = fn
 
 #        print '  Cleaning file: %s' % fn
         new_fn = clean_filename(fn)
         if fn != new_fn:
-            rename(fn, new_fn)
+            new_fp = os.path.join(dirn, new_fn)
+            rename(fp, new_fp)
             n_renamed += 1
 
     print ''
