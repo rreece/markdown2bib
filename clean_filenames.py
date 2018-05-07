@@ -148,8 +148,8 @@ def clean_filename(fn):
     new_fn = new_fn.replace('----', '-')
     new_fn = new_fn.replace('---', '-')
     new_fn = new_fn.replace('--', '-')
-#    new_fn = new_fn.replace('.-', '.')
-#    new_fn = new_fn.replace('-.', '.')
+    new_fn = new_fn.replace('.-', '.')
+    new_fn = new_fn.replace('-.', '.')
 
     ## remove strange characters
     len_fn = len(new_fn)

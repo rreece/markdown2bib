@@ -215,6 +215,8 @@ def get_input_files():
     if len(input_files) == 0:
         fatal('| You should give some input pdf files as arguments.')
 
+    input_files.sort()
+
     return input_files
 
 #______________________________________________________________________________
