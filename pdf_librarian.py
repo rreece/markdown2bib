@@ -116,18 +116,29 @@ def main():
 #                    rename(fn, new_fn)
 #
 
+            bibtex = None
             cmd_template = r'scholar.py --no-patents --title-only --author "%s" --after %i --before %i --phrase "%s" --citation=bt'
-            bibtex = subprocess.check_output(cmd_template % (author, year, year, title), stderr=subprocess.STDOUT, shell=True)
+            try:
+                bibtex = subprocess.check_output(cmd_template % (author, year, year, title), stderr=subprocess.STDOUT, shell=True)
+            except Exception as e:
+                print e
+                bibtex = None
 
             if not bibtex:
                 title = title.replace('QFT', 'Quantum Field Theory')
                 print cmd_template % (author, year-1, year+1, title)
-                bibtex = subprocess.check_output(cmd_template % (author, year-1, year+1, title), stderr=subprocess.STDOUT, shell=True)
+                
+                try:
+                    bibtex = subprocess.check_output(cmd_template % (author, year-1, year+1, title), stderr=subprocess.STDOUT, shell=True)
+                except Exception as e:
+                    print e
+                    bibtex = None
 
                 if not bibtex:
                     print '| Nothing found!'
 
-            print bibtex.split('@')
+            if bibtex:
+                print bibtex.split('@')
 
 
         ## automatically fix files that are nearly good
