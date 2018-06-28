@@ -250,9 +250,9 @@ def clean_filename(fn):
     new_fn = new_fn.replace('_', '')
 
     ## remove any more than 3 periods (keeping first 2 and last)
-    np = new_fn.count('.')
-    if np > 3:
-        new_fn = new_fn.replace('.', '#', np-1)
+    n_periods = new_fn.count('.')
+    if n_periods > 3:
+        new_fn = new_fn.replace('.', '#', n_periods-1)
         new_fn = new_fn.replace('.', '@', 1)
         new_fn = new_fn.replace('#', '@', 2)
         new_fn = new_fn.replace('#', '-')
@@ -283,6 +283,13 @@ def fix_filename(fn):
             author = author.capitalize()
         c_authors.append(author)
     s_authors = '-'.join(c_authors)
+
+    ## remove 'The', 'A', or 'An' from start of titles
+    title_words = s_title.split('-')
+    title_word0 = title_words[0]
+    if title_word0.lower() in ('the', 'a', 'an'):
+        title_words = title_words[1:]
+    s_title = '-'.join(title_words)
 
     ## capitalize the first word of the title. others comes as they are.
     title_words = s_title.split('-')
