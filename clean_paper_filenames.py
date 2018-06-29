@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 """
 NAME
-    name.py - short description
+    clean_paper_filenames.py - cleans file names of pdf papers
 
 SYNOPSIS
-    Put synposis here.
+    Removes non-ascii, whitespace, and underscores from file names.
 
 DESCRIPTION
     Put description here.
@@ -13,24 +13,17 @@ OPTIONS
     -h, --help
         Prints this manual and exits.
         
-    -n VAL
-        Blah blah.
+    -f, --force
+        Force default renaming choices without asking questions.
 
 AUTHOR
-    Ryan Reece  <ryan.reece@cern.ch>
+    Ryan Reece  <ryan.reece@gmail.com>
 
 COPYRIGHT
-    Copyright 2010 Ryan Reece
+    Copyright 2016 Ryan Reece
     License: GPL <http://www.gnu.org/licenses/gpl.html>
 
-SEE ALSO
-    ROOT <http://root.cern.ch>
-
-TO DO
-    - One.
-    - Two.
-
-2011-06-15
+2016-03-15
 """
 
 #------------------------------------------------------------------------------
@@ -306,19 +299,31 @@ def fix_filename(fn):
 
 #______________________________________________________________________________
 def make_default_filename(fn, meta):
-    new_fn = clean_filename(fn)
+    new_fn = str(fn)
 
+    new_fn = clean_filename(fn)
     root, ext = os.path.splitext(new_fn) # ext = '.pdf'
     root = root.replace('.', '-')
 
     if not meta.has_key('year'): # always not in pdf
         meta['year'] = time.strftime('%Y') # use the current year as a placeholder
+#        meta['year'] = 1111 # use 1111 as the year placeholder
     
     if not (meta.has_key('author') and meta['author'] and meta['author'].lower() != 'none'):
         meta['author'] = 'Author'
     
     if not (meta.has_key('title') and meta['title'] and meta['title'].lower() != 'none'):
         meta['title'] = root
+
+    ## some fixes for the author metadata
+    meta['author'] = clean_filename(meta['author'])
+    meta['author'] = meta['author'].replace('.', '')
+
+    ## some fixes for the title metadata
+    meta['title'] = clean_filename(meta['title'])
+    if meta['title'].endswith('.pdf'):
+        meta['title'] = meta['title'][:-4]
+    meta['title'] = meta['title'].replace('.', '')
 
     new_fn = '%(year)s.%(author)s.%(title)s.pdf' % meta
 

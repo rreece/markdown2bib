@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 """
 NAME
-    clean_filenames.py - short description
+    clean_filenames.py - clean filenames
 
 SYNOPSIS
-    Put synposis here.
+    Removes non-ascii, whitespace, and underscores from file names.
 
 DESCRIPTION
     Put description here.
@@ -13,24 +13,14 @@ OPTIONS
     -h, --help
         Prints this manual and exits.
         
-    -n VAL
-        Blah blah.
-
 AUTHOR
-    Ryan Reece  <ryan.reece@cern.ch>
+    Ryan Reece  <ryan.reece@gmail.com>
 
 COPYRIGHT
-    Copyright 2010 Ryan Reece
+    Copyright 2016 Ryan Reece
     License: GPL <http://www.gnu.org/licenses/gpl.html>
 
-SEE ALSO
-    ROOT <http://root.cern.ch>
-
-TO DO
-    - One.
-    - Two.
-
-2011-06-15
+2016-03-15
 """
 
 #------------------------------------------------------------------------------
@@ -67,8 +57,8 @@ def options():
     parser = argparse.ArgumentParser()
     parser.add_argument('infiles', nargs='+', default=None,
             help='A positional argument.')
-    parser.add_argument('-x', '--option',  default=False,  action='store_true',
-            help="Some toggle option.")
+#    parser.add_argument('-x', '--option',  default=False,  action='store_true',
+#            help="Some toggle option.")
     return parser.parse_args()
 
 

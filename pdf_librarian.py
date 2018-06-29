@@ -232,11 +232,12 @@ def get_input_files():
 
 #______________________________________________________________________________
 def clean_filename(fn):
-    new_fn = str(fn)
-
-    ## remove extra spaces and convert to '-'
-    new_fn = new_fn.strip()
-    u_new_fn = unicode(new_fn, 'utf-8')
+    new_fn = fn.strip()
+    u_new_fn = None
+    if isinstance(new_fn, unicode):
+        u_new_fn = new_fn
+    else:
+        u_new_fn = unicode(new_fn, 'utf-8')
 
     ## change unicode-hyphen-like characters to ascii
     u_new_fn = u_new_fn.replace(u'\u2010', '-')
@@ -282,13 +283,21 @@ def clean_filename(fn):
         i += 1
     new_fn = new_fn.replace('_', '')
 
+    ## remove any more than 3 periods (keeping first 2 and last)
+    n_periods = new_fn.count('.')
+    if n_periods > 3:
+        new_fn = new_fn.replace('.', '#', n_periods-1)
+        new_fn = new_fn.replace('.', '@', 1)
+        new_fn = new_fn.replace('#', '@', 2)
+        new_fn = new_fn.replace('#', '-')
+        new_fn = new_fn.replace('@', '.')
+        len_fn = len(new_fn)
+
     return new_fn
 
 
 #______________________________________________________________________________
 def fix_filename(fn):
-    new_fn = str(fn)
-
     new_fn = clean_filename(fn)
 
     ## fix suffix
@@ -308,6 +317,13 @@ def fix_filename(fn):
             author = author.capitalize()
         c_authors.append(author)
     s_authors = '-'.join(c_authors)
+
+    ## remove 'The', 'A', or 'An' from start of titles
+    title_words = s_title.split('-')
+    title_word0 = title_words[0]
+    if title_word0.lower() in ('the', 'a', 'an'):
+        title_words = title_words[1:]
+    s_title = '-'.join(title_words)
 
     ## capitalize the first word of the title. others comes as they are.
     title_words = s_title.split('-')
@@ -331,8 +347,8 @@ def make_default_filename(fn, meta):
     root = root.replace('.', '-')
 
     if not meta.has_key('year'): # always not in pdf
-#        meta['year'] = time.strftime('%Y') # use the current year as a placeholder
-        meta['year'] = 1111 # use 1111 as the year placeholder
+        meta['year'] = time.strftime('%Y') # use the current year as a placeholder
+#        meta['year'] = 1111 # use 1111 as the year placeholder
     
     if not (meta.has_key('author') and meta['author'] and meta['author'].lower() != 'none'):
         meta['author'] = 'Author'

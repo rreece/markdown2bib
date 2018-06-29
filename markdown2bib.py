@@ -18,7 +18,7 @@ OPTIONS
         Specifies the output filename (out.bib by default).
 
 AUTHOR
-    Ryan Reece  <ryan.reece@cern.ch>
+    Ryan Reece  <ryan.reece@gmail.com>
 
 COPYRIGHT
     Copyleft 2016 Ryan Reece
