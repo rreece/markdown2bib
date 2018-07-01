@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 """
 NAME
     clean_paper_filenames.py - cleans file names of pdf papers

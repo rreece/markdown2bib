@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 """
 NAME
     markdown2bib.py - Converts simple markdown-formatted APA bibliographies to bibtex

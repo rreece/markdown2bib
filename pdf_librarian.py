@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 """
 NAME
     pdf_librarian.py - short description
@@ -13,18 +13,21 @@ OPTIONS
     -h, --help
         Prints this manual and exits.
         
-    -n VAL
-        Blah blah.
+    -a, --always
+        Always check Google Scholar to update file names.
+
+    -f, --force
+        Force default renaming choices without asking questions.
 
 AUTHOR
-    Ryan Reece  <ryan.reece@cern.ch>
+    Ryan Reece  <ryan.reece@gmail.com>
 
 COPYRIGHT
     Copyright 2016 Ryan Reece
     License: GPL <http://www.gnu.org/licenses/gpl.html>
 
 SEE ALSO
-    ROOT <http://root.cern.ch>
+    -   https://github.com/ckreibich/scholar.py
 
 TO DO
     - One.
@@ -69,6 +72,8 @@ def options():
             help='Input files.')
     parser.add_argument('-a', '--always',  default=False,  action='store_true',
             help="Always check Google Scholar to update file names.")
+    parser.add_argument('-f', '--force',  default=False,  action='store_true',
+            help="Ask no questions.")
     return parser.parse_args()
 
 
@@ -78,157 +83,121 @@ def options():
 def main():
     ops = options()
 
-    input_files = get_input_files()
+    infiles = ops.infiles
 
-    print '|'
+    if len(infiles) == 0:
+        print '  You can give some input pdf files as arguments. Assuming *.pdf'
+        infiles = glob.glob('*.pdf')
+
+    if len(infiles) == 0:
+        fatal('You should give some input pdf files as arguments.')
+
+    print ''
 
     rex_good_filename = r'\d\d\d\d?(BCE)?\.[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+\.pdf'
     rex_near_filename = r'\d\d\d\d?(BCE)?\.[^.]+\.[^.]+\.(pdf|PDF)'
 
+    n_renamed = 0
     new_filenames = []
     good_filenames = []
 
-    for fn in input_files:
+    for fp in infiles:
+        dirn, fn = os.path.split(fp)
+        new_fn = fn
+        new_fp = fp
 
         ## skip files that are not pdfs
         if not re.match(r'.+\.(pdf|PDF)', fn):
-            print '| Skipping file (not a pdf): %s' % fn
+            print '  Skipping file (not a pdf): %s' % fn
             continue
 
-        ## check if filename is "good"
+        ## note good files
         if re.match(rex_good_filename, fn):
-            print '| Good filename: %s' % fn
-            good_filenames.append(fn)
+            print '  Good filename: %s' % fn
+            good_filenames.append(fp)
 
-            fn_parts = fn.split('.')
-            year, author, title, pdf = fn_parts
-            year = int(year)
-            title = title.replace('-', ' ')
-
-#            if ops.always:
-#
-#            else:
-#                ## ask if the default name is ok
-#                print '| The corrected file name defaults to: %s' % new_fn
-#                uin = raw_input('| Would you like to rename the file to this? [y/n]: ').strip()
-#
-#                if uin == 'y' or uin == 'Y':
-#                    rename(fn, new_fn)
-#
-
-            bibtex = None
-            cmd_template = r'scholar.py --no-patents --title-only --author "%s" --after %i --before %i --phrase "%s" --citation=bt'
-            try:
-                bibtex = subprocess.check_output(cmd_template % (author, year, year, title), stderr=subprocess.STDOUT, shell=True)
-            except Exception as e:
-                print e
-                bibtex = None
-
-            if not bibtex:
-                title = title.replace('QFT', 'Quantum Field Theory')
-                print cmd_template % (author, year-1, year+1, title)
-                
-                try:
-                    bibtex = subprocess.check_output(cmd_template % (author, year-1, year+1, title), stderr=subprocess.STDOUT, shell=True)
-                except Exception as e:
-                    print e
-                    bibtex = None
-
-                if not bibtex:
-                    print '| Nothing found!'
-
-            if bibtex:
-                print bibtex.split('@')
-
-
-        ## automatically fix files that are nearly good
-        elif re.match(rex_near_filename, fn):
-            print '| Fixing file: %s' % fn
-            new_fn = fix_filename(fn)
-            rename(fn, new_fn)
-            new_filenames.append(new_fn)
-            good_filenames.append(new_fn)
-
-        ## ask the user for help
+        ## try cleaning
         else:
-            print '|'
-            print '| File: %s' % fn
-            print '|   is not close to having a good name.' 
+            print '  Cleaning file: %s' % fn
+            new_fn = clean_filename(fn)
 
-            ## try to use the metadata first
-            meta = get_pdf_metadata(fn)
-            if meta:
-                print '| The pdf metadata: %s' % meta
-                new_fn = make_default_filename(fn, meta)
+            ## automatically fix files that are nearly good
+            if re.match(rex_near_filename, new_fn):
+                print '  Fixing file: %s' % new_fn
                 new_fn = fix_filename(new_fn)
+                new_fp = os.path.join(dirn, new_fn)
+                rename(fp, new_fp)
+                n_renamed += 1
+                new_filenames.append(new_fp)
+                good_filenames.append(new_fp)
 
-            ## ask if the default name is ok
-            print '| The corrected file name defaults to: %s' % new_fn
-            uin = raw_input('| Would you like to rename the file to this? [y/n]: ').strip()
-
-            if uin == 'y' or uin == 'Y':
-                rename(fn, new_fn)
-                new_filenames.append(new_fn)
-                good_filenames.append(new_fn)
-            
+            ## ask the user for help
             else:
-                ## ask if the user would like to enter a better name
-                uin = raw_input('| Would you like to enter a better one? [y/n]: ').strip()
-                if uin == 'y' or uin == 'Y':
-                    p = subprocess.Popen('open %s' % fn.replace(' ', r'\ '), shell=True)
-                    uin = raw_input('| New file name (empty => skip): ').strip()
-                    p.terminate()  # Seems to do nothing. Apple Preview stays open.
+                print ''
+                print '  File: %s' % fn
+                print '    is not close to having a good name.' 
 
-                    if uin:
-                        print '| You suggest: %s' % uin
-                        new_fn = fix_filename(uin)
-                        rename(fn, new_fn)
-                        new_filenames.append(new_fn)
-                        good_filenames.append(new_fn)
+                ## try to use the metadata first
+                meta = get_pdf_metadata(fp)
+                if meta:
+                    print '  The pdf metadata: %s' % meta
+                    new_fn = make_default_filename(fn, meta)
+                    new_fn = fix_filename(new_fn)
 
-                    else:
-                        print '| Skipping file.'
-            
+                ## ask if the default name is ok
+                print '  The corrected file name defaults to: %s' % new_fn
+                uin = None
+                if ops.force:
+                    uin = 'y'
                 else:
-                    print '| Skipping file.'
+                    uin = raw_input('  Would you like to rename the file to this? [y/n]: ').strip()
+
+                if uin == 'y' or uin == 'Y':
+
+                    new_fp = os.path.join(dirn, new_fn)
+                    rename(fp, new_fp)
+                    n_renamed += 1
+                    new_filenames.append(new_fp)
+                    good_filenames.append(new_fp)
+                
+                else:
+                    ## ask if the user would like to enter a better name
+                    uin = raw_input('  Would you like to enter a better one? [y/n]: ').strip()
+                    if uin == 'y' or uin == 'Y':
+                        p = subprocess.Popen('open %s' % fn.replace(' ', r'\ '), shell=True)
+                        uin = raw_input('  New file name (empty => skip): ').strip()
+                        p.terminate()  # Seems to do nothing. Apple Preview stays open.
+
+                        if uin:
+                            print '  You suggest: %s' % uin
+                            new_fn = fix_filename(uin)
+                            new_fp = os.path.join(dirn, new_fn)
+                            rename(fp, new_fp)
+                            n_renamed += 1
+                            new_filenames.append(new_fp)
+                            good_filenames.append(new_fp)
+
+                        else:
+                            print '  Skipping file.'
+                
+                    else:
+                        print '  Skipping file.'
 
 
-    print '|'
-    print '| %i files renamed:' % len(new_filenames)
-    print '|'
+    print ''
+    print '  %i files renamed:' % n_renamed
+    print ''
     for fn in new_filenames:
-        print '| %s' % fn
-    print '|'
+        print '  %s' % fn
+    print ''
 
     write_index_md(good_filenames)
-    print '|'
-
-
+    print ''
 
 
 #------------------------------------------------------------------------------
 # free functions
 #------------------------------------------------------------------------------
-
-#______________________________________________________________________________
-def get_input_files():
-    ops = options()
-
-    input_files = list()
-
-    if ops.infiles:
-        input_files = list(ops.infiles)
-    else:
-        print '| You can give some input pdf files as arguments. Assuming *.pdf'
-        input_files = glob.glob('*.pdf')
-        input_files.extend(glob.glob('*.PDF'))
-
-    if len(input_files) == 0:
-        fatal('| You should give some input pdf files as arguments.')
-
-    input_files.sort()
-
-    return input_files
 
 #______________________________________________________________________________
 def clean_filename(fn):
@@ -372,6 +341,36 @@ def make_default_filename(fn, meta):
 
 
 #______________________________________________________________________________
+def get_scholar_filename(fn, meta):
+    new_fn = str(fn)
+    bibtex = None
+    cmd_template = r'scholar.py --no-patents --title-only --author "%s" --after %i --before %i --phrase "%s" --citation=bt'
+    try:
+        bibtex = subprocess.check_output(cmd_template % (author, year, year, title), stderr=subprocess.STDOUT, shell=True)
+    except Exception as e:
+        print e
+        bibtex = None
+
+    if not bibtex:
+        title = title.replace('QFT', 'Quantum Field Theory')
+        print cmd_template % (author, year-1, year+1, title)
+        
+        try:
+            bibtex = subprocess.check_output(cmd_template % (author, year-1, year+1, title), stderr=subprocess.STDOUT, shell=True)
+        except Exception as e:
+            print e
+            bibtex = None
+
+        if not bibtex:
+            print '| Nothing found!'
+
+    if bibtex:
+        print bibtex.split('@')
+
+    return new_fn
+
+
+#______________________________________________________________________________
 def get_pdf_metadata(fn):
 
     meta = dict()
@@ -396,8 +395,8 @@ def get_pdf_metadata(fn):
 
 #______________________________________________________________________________
 def rename(fn, new_fn):
-    print '| Renaming %s' % fn
-    print '|       to %s' % new_fn
+    print '  Renaming %s' % fn
+    print '        to %s' % new_fn
     os.rename(fn, new_fn)
 
 
@@ -407,7 +406,7 @@ def write_index_md(good_filenames):
     for fn in good_filenames:
         out.write('1.  %s\n' % (fn))
     out.close()
-    print '| index.md written.'
+    print '  index.md written.'
 
 
 #______________________________________________________________________________

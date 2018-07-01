@@ -44,11 +44,11 @@ Try running on the example test file:
 
 ## Author
 
-Ryan Reece  <ryan.reece@cern.ch>
+Ryan Reece  <ryan.reece@gmail.com>                
 
 ## License
 
-Copyleft 2016 Ryan Reece     
+Copyleft 2016 Ryan Reece       
 License: GPL <http://www.gnu.org/licenses/gpl.html>
 
 ## TODOs
