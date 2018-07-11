@@ -143,6 +143,9 @@ def main():
                     print '  The pdf metadata: %s' % meta
                     new_fn = make_default_filename(fn, meta)
                     new_fn = fix_filename(new_fn)
+                
+                ## ask Google Scholar for help
+                new_fn = get_scholar_filename(new_fn, meta)
 
                 ## ask if the default name is ok
                 print '  The corrected file name defaults to: %s' % new_fn
@@ -344,6 +347,7 @@ def make_default_filename(fn, meta):
 def get_scholar_filename(fn, meta):
     new_fn = str(fn)
     bibtex = None
+    ## try to find work by author and year
     cmd_template = r'scholar.py --no-patents --title-only --author "%s" --after %i --before %i --phrase "%s" --citation=bt'
     try:
         bibtex = subprocess.check_output(cmd_template % (author, year, year, title), stderr=subprocess.STDOUT, shell=True)
@@ -352,6 +356,7 @@ def get_scholar_filename(fn, meta):
         bibtex = None
 
     if not bibtex:
+        ## try to find work by author and year+/-1
         title = title.replace('QFT', 'Quantum Field Theory')
         print cmd_template % (author, year-1, year+1, title)
         
