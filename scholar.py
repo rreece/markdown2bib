@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 """
 This module provides classes for querying Google Scholar and parsing
 returned results. It currently *only* processes the first results
