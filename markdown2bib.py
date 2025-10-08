@@ -15,7 +15,7 @@ OPTIONS
     -h, --help
         Prints this manual and exits.
         
-    -o OUTFILE
+e   -o OUTFILE
         Specifies the output filename (out.bib by default).
 
 AUTHOR
@@ -45,13 +45,14 @@ import unicodedata
 
 # Baker, D.J. (2009). Against field interpretations of quantum field theory. *The British Journal for the Philosophy of Science*, 60(3), 585--609.
 # Baker, D.J. (2015). The Philosophy of Quantum Field Theory. [Preprint]
-rep_article_s = ''.join([r"(?P<author>([^(),.]+(,\s+\w\.(\s*\w\.)?(\s*\w\.)?)?(,?\s+(&\s+)?)?){1,6}(\s+et\s+al\.)?)[,.]?",
+rep_article_s = ''.join([r"(?P<author>((\{[^}]+\})|([^(),.]+(,\s+\w\.(\s*\w\.)?(\s*\w\.)?)?(,?\s+(&\s+)?)?){1,6}(\s+et\s+al\.)?))[,.]?",
+#rep_article_s = ''.join([r"(?P<author>\{[^}]+\})[,.]?",
                     r"\s+\((?P<year>\d+)\)[,.]",
 #                    r"\s+(?P<title>[^.?!\[\]]+[?!]?)[,.]?",
                     r"\s+(?P<title>[^*\[\]]+)[,.]?",
                     r"(?!\s+<?https?://)(\s+\*(?P<journal>[^*]+)\*[,.]?)",
                     r"(\s+\*?(?P<volume>\d+)\*?(\((?P<number>\d+)\))?[,.]?)?",
-                    r"(\s+(?P<pages>(P|p)?\d+-*\d*)[,.]?)?",
+                    r"(\s+(?P<pages>(P|p)?\w?\d+-*\w?\d*)[,.]?)?",
                     r"(\s+(Retrieved\s+from\s+)?<?(?P<url>https?://[^ \t\n\r\f\v<>]+)>?[,.]?)?",
                     r"(\s+\[?(?P<note>[^\[\]]+)\]?\.?)?",
                     ])
@@ -169,13 +170,13 @@ def main():
             print(a)
 
         print('')
-        print(' %3i entries found' % len(results))
-        print(' %3i articles' % len(articles))
-        print(' %3i incollections' % len(incollections))
-        print(' %3i books' % len(books))
-        print(' %3i miscs' % len(miscs))
-        print(' %3i errors' % len(errors))
-        print(' %3i duplicates' % len(duplicates))
+        print(' %4i entries found' % len(results))
+        print(' %4i articles' % len(articles))
+        print(' %4i incollections' % len(incollections))
+        print(' %4i books' % len(books))
+        print(' %4i miscs' % len(miscs))
+        print(' %4i errors' % len(errors))
+        print(' %4i duplicates' % len(duplicates))
         print('')
 
         output_log = '%s.log' % os.path.splitext(os.path.basename(ops.output))[0]
@@ -342,7 +343,7 @@ def make_book(reo):
     cite_author = reo.group('author').split()[0].rstrip(',')
     cite_author_lower = cite_author.lower()
     has_von = False
-    if cite_author_lower in ('van', 'von', 'da', 'de', 'di', "'t"):
+    if cite_author_lower in ('van', 'ver', 'von', 'da', 'de', 'del', 'di', "'t"):
         cite_author += reo.group('author').split()[1].rstrip(',')
         has_von = True
     cite_year = reo.group('year')
@@ -406,7 +407,7 @@ def make_incollection(reo):
     cite_author = reo.group('author').split()[0].rstrip(',')
     cite_author_lower = cite_author.lower()
     has_von = False
-    if cite_author_lower in ('van', 'von', 'da', 'de', 'di', "'t"):
+    if cite_author_lower in ('van', 'von', 'da', 'de', 'del', 'di', "'t"):
         cite_author += reo.group('author').split()[1].rstrip(',')
         has_von = True
     cite_year = reo.group('year')
@@ -471,7 +472,7 @@ def make_article(reo):
     cite_author = reo.group('author').split()[0].rstrip(',')
     cite_author_lower = cite_author.lower()
     has_von = False
-    if cite_author_lower in ('van', 'von', 'da', 'de', 'di', "'t"):
+    if cite_author_lower in ('van', 'von', 'da', 'de', 'del', 'di', "'t"):
         cite_author += reo.group('author').split()[1].rstrip(',')
         has_von = True
     cite_year = reo.group('year')
@@ -529,7 +530,7 @@ def make_misc(reo):
     cite_author = reo.group('author').split()[0].rstrip(',')
     cite_author_lower = cite_author.lower()
     has_von = False
-    if cite_author_lower in ('van', 'von', 'da', 'de', 'di', "'t"):
+    if cite_author_lower in ('van', 'von', 'da', 'de', 'del', 'di', "'t"):
         cite_author += reo.group('author').split()[1].rstrip(',')
         has_von = True
     cite_year = reo.group('year')
@@ -630,6 +631,9 @@ def clean_citation(s):
         new_s = new_s[:-4]
         new_s_lower = new_s.lower()
     ## chop-off prepositions
+    if new_s_lower.endswith('_by'):
+        new_s = new_s[:-3]
+        new_s_lower = new_s.lower()
     if new_s_lower.endswith('_for'):
         new_s = new_s[:-4]
         new_s_lower = new_s.lower()
@@ -642,11 +646,21 @@ def clean_citation(s):
     if new_s_lower.endswith('_to'):
         new_s = new_s[:-3]
         new_s_lower = new_s.lower()
+    if new_s_lower.endswith('_with'):
+        new_s = new_s[:-5]
+        new_s_lower = new_s.lower()
     ## chop-off conjuctions
     if new_s_lower.endswith('_and'):
         new_s = new_s[:-4]
         new_s_lower = new_s.lower()
+    if new_s_lower.endswith('_or'):
+        new_s = new_s[:-3]
+        new_s_lower = new_s.lower()
+    if new_s_lower.endswith('_but'):
+        new_s = new_s[:-4]
+        new_s_lower = new_s.lower()
 
+    new_s = new_s.strip('_')
     return new_s
 
 
@@ -663,6 +677,8 @@ def clean_author(s):
     TODO: Put and's between each author.
     s = s.replace('&', 'and')
     """
+    if s.startswith('{'):
+        return s
     reo = rep_author.search(s)
     if reo:
         if reo.group('etal'):
